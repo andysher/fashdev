@@ -1,25 +1,46 @@
-set :application, "set your application name here"
-set :repository,  "set your repository location here"
+require "bundler/capistrano"
+require "rvm/capistrano"
+set :rvm_ruby_string, '1.9.3'
 
-set :scm, :subversion
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
+server "50.57.231.142", :web, :app, :db, :primary => true
 
-role :web, "your web-server here"                          # Your HTTP server, Apache/etc
-role :app, "your app-server here"                          # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"
+set :application, "sample"
+set :user, "facoteam1"
+set :deploy_to, "/home/facoteam1/stores/#{application}"
+set :deploy_via, :remote_cache
+set :use_sudo, false
+set :rails_env, "production"
 
-# if you want to clean up old releases on each deploy uncomment this:
-# after "deploy:restart", "deploy:cleanup"
+set :repository, "git@github.com:Anjali-Veer/sample.git"
+set :scm, :git
+set :branch, "master"
 
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
 
-# If you are using Passenger mod_rails uncomment this:
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
+set :shell, '/bin/bash'
+
+set :rvm_type, :system
+
+default_run_options[:pty]=true
+default_run_options[:shell]=false
+ssh_options[:forward_agent]=true
+
+after 'deploy', 'deploy:cleanup'
+after 'deploy', 'deploy:migrate'
+
+#ssh_options[:keys] = %w(/home/user/.ssh/id_rsa) # If you are using ssh_keysset :chmod755, "app config db lib public vendor script script/* public/disp*"set :use_sudo, false
+ 
+# Passenger
+namespace :deploy do
+  task :start, :roles => :app do
+    run "touch /home/facoteam1/stores/#{application}/current/tmp/restart.txt"
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application"
+  task :restart, :roles => :app do
+    run "touch /home/facoteam1/stores/#{application}/current/tmp/restart.txt"
+  end
+end

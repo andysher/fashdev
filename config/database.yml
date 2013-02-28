@@ -37,6 +37,6 @@ production:
   reconnect: false
   database: fashdev_production
   pool: 5
-  username: root
-  password: andysher
+  username: facoteam1
+  password: anchanto
   socket: /var/run/mysqld/mysqld.sock

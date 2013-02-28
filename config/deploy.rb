@@ -1,62 +1,46 @@
 require "bundler/capistrano"
-load 'deploy/assets'
+require "rvm/capistrano"
+set :rvm_ruby_string, '1.9.3'
 
-set :application, "spree"
-set :user, 'spree'
-set :group, 'www-data'
-set :rails_env, 'production'
+server "50.57.231.142", :web, :app, :db, :primary => true
 
-role :web, '198.101.145.166'
-role :app, '198.101.145.166'
-role :db,  '198.101.145.166', :primary => true
+set :application, "sample"
+set :user, "facoteam1"
+set :deploy_to, "/home/facoteam1/stores/#{application}"
+set :deploy_via, :remote_cache
+set :use_sudo, false
+set :rails_env, "production"
 
+set :repository, "git@github.com:andysher/fashdev.git"
 set :scm, :git
-set :repository,  "git@github.com:andysher/fashdev.git"
-set :branch,      "master"
-set :deploy_to,   "/data/#{application}"
-set :deploy_via,  :remote_cache
-set :use_sudo,    false
+set :branch, "master"
 
-default_run_options[:pty] = true
-set :ssh_options, { :forward_agent => true }
 
-namespace :foreman do
-  desc "Export the Procfile to Ubuntu's upstart scripts"
-  task :export, :roles => :app do
-    run "cd #{current_path} && bundle exec foreman export upstart /etc/init"
-  end
+set :shell, '/bin/bash'
 
-  desc "Start the application services"
-  task :start, :roles => :app do
-    sudo "start #{application}"
-  end
+set :rvm_type, :system
 
-  desc "Stop the application services"
-  task :stop, :roles => :app do
-    sudo "stop #{application}"
-  end
+default_run_options[:pty]=true
+default_run_options[:shell]=false
+ssh_options[:forward_agent]=true
 
-  desc "Restart the application services"
-  task :restart, :roles => :app do
-    sudo "restart #{application}"
-  end
-end
+after 'deploy', 'deploy:cleanup'
+after 'deploy', 'deploy:migrate'
 
+#ssh_options[:keys] = %w(/home/user/.ssh/id_rsa) # If you are using ssh_keysset :chmod755, "app config db lib public vendor script script/* public/disp*"set :use_sudo, false
+ 
+# Passenger
 namespace :deploy do
-  desc "Symlink shared configs and folders on each release."
-  task :symlink_shared do
-    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-    run "ln -nfs #{shared_path}/config/Procfile #{release_path}/Procfile"
-    run "ln -nfs #{shared_path}/config/.foreman #{release_path}/.foreman"
+  task :start, :roles => :app do
+    run "touch /home/facoteam1/stores/#{application}/current/tmp/restart.txt"
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application"
+  task :restart, :roles => :app do
+    run "touch /home/facoteam1/stores/#{application}/current/tmp/restart.txt"
   end
 end
-
-before 'deploy:assets:precompile', 'deploy:symlink_shared'
-
-before 'deploy:start', 'foreman:export'
-after 'deploy:start', 'foreman:start'
-
-before 'deploy:restart', 'foreman:export'
-after 'deploy:restart', 'foreman:restart'
-
-

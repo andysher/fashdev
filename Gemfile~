@@ -5,8 +5,16 @@ gem 'rails', '3.2.8'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
-
+group :production do
+  gem 'unicorn'
+  gem 'mysql2'
+  gem 'foreman'
+  gem 'therubyracer' #only required for 0.70.x or later
+end
+ 
+group :development do
+  gem 'capistrano'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -15,7 +15,7 @@ development:
   database: fashdev_development
   pool: 5
   username: root
-  password:
+  password: andysher
   socket: /var/run/mysqld/mysqld.sock
 
 # Warning: The database defined as "test" will be erased and
@@ -28,7 +28,7 @@ test:
   database: fashdev_test
   pool: 5
   username: root
-  password:
+  password: andysher
   socket: /var/run/mysqld/mysqld.sock
 
 production:
@@ -37,6 +37,6 @@ production:
   reconnect: false
   database: fashdev_production
   pool: 5
-  username: root
-  password:
+  username: facoteam1
+  password: anchanto
   socket: /var/run/mysqld/mysqld.sock
