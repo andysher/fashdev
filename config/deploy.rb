@@ -4,7 +4,7 @@ set :rvm_ruby_string, '1.9.3'
 
 server "50.57.231.142", :web, :app, :db, :primary => true
 
-set :application, "sample"
+set :application, "fashdev"
 set :user, "facoteam1"
 set :deploy_to, "/home/facoteam1/stores/#{application}"
 set :deploy_via, :remote_cache
